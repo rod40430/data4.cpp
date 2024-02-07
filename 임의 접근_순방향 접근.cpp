@@ -20,3 +20,7 @@ void sort_helper(For beg, For end, forward_iterator_tag)  // [ beg:end]를 순�
   sort(v.begin, v.end());
   copy(v.begin(), v.end(), beg);  // 원소를 되돌려서 복사한다
 }
+// template<typename C>
+  // using Iterator_type = typename C::iterator;  // C의 반복자 타입
+// template<typename Iter>
+  // using Iterator_category = typename std::iterator_traits<Iter>::iterator_category;  // Iter의 카테고리
