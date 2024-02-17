@@ -12,12 +12,25 @@ struct Token
   double number_value;
 };
 
-class ToKen_stream
+class Token_stream
 {
 public:
+  Token_stream(istream& s) : ip{&s}, owns{false} {}
+  Token_stream(istream* s) : ip{s}, owns{true} {}
+
+  ~Token_stream() {close();}
+
   Token get();  // 다음 토큰을 읽고 반환한다
-  const Token& current();  // 가장 최근에 읽혀진 토큰
-  // ...
+  const Token& current() {return ct;}  // 가장 최근에 읽혀진 토큰
+
+  void set_input(istream& s) {close(); ip = &s; owns = false;}
+  void set_input(istream* p) {close(); ip = p; owns = true;}
+private:
+  void close() {if (owns) delete ip;}
+
+  istream* ip;
+  bool owns;  // Token_stream이 istream을 소유하고 있는가?
+  Token ct{Kind::end};  // 현재의 토큰
 };
 
 double expr(bool get)  // 덧셈과  뺄셈
