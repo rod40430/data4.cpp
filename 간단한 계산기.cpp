@@ -35,49 +35,36 @@ private:
 
 Token Token_stream::get()
 {
-  char ch = 0;
-  *ip>>ch;
+  char ch;
 
+  do  // '\n'을 제외한 공백을 건너뛴다
+    {
+      if (!ip->get(ch)) return ct = {Kind::end};
+    }while (ch != '\n' && isspace(ch));
   switch (ch)
     {
-      case 0:
-        return ct = {Kind::end};  // 대입과 반환
-      case ';':                   // 표현식의 끝 ;을 출력한다
-      case '*':
-      case '/':
-      case '+':
-      case '-':
-      case '(':
-      case ')':
-      case '=':
-        return ct = {static_cast<Kind>(ch)};  // char에서 Kind로 암시적 변환 불가
-      case '0':
-      case '1':
-      case '2':
-      case '3':
-      case '4':
-      case '5':
-      case '6':
-      case '7':
-      case '8':
-      case '9':
-      case '.':
-        ip->putback(ch);  // 첫 번째 수치 (또는 .)입력 스트림에 다시 집어넣는다
-        *ip>>ct.number_value;  // ct로 숫자를 읽어 들인다
-        ct.kind = Kind::number;
-        return ct;
-      default:  // name, name =가 아니면 오류
-      if (isalpha(ch))
-      {
-        ip->putback(ch);  // 첫 번째 문자를 입력 스트림에 돌려놓는다
-        *ip>>ct.string_value;  // 문자열을 ct로 읽어 들인다
-        ct.kind = Kind::name;
-        return ct;
-      }
+      case ';':
+      case '\n':
+        return ct = {Kind::print};
+      default:  // NAME, NAME =가 아니면 오류
+        if (isalpha(ch))
+        {
+          ct.string_value = ch;
+          while (ip->get(ch))
+            if (isalnum(ch))
+              ct.string_value += ch;  // ch를 string_value의 끝에 붙인다
+            else
+            {
+              ip->putback(ch);
+              break;
+            }
+          ct.kind = Kind::name;
+          return ct;
+        }
     }
   error("bad token");
   return ct = {Kind::print};
-} 
+}
 
 double expr(bool get)  // 덧셈과  뺄셈
 {
