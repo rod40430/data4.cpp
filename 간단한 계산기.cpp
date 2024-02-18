@@ -1,9 +1,22 @@
+#include <iostream>
+#include <limits>
+using namespace std;
+
 enum class Kind : char
 {
   name, number, end,
   plus = '+', minus = '-', mul = '*', div = '/', print = ';', assign = '=',
   lp = '(', rp =')'
 };
+
+int no_of_errors {};
+
+double error(const string& s)
+{
+  no_of_errors++;
+  cerr<<"error : "<<s<<'\n';
+  return 1;
+}
 
 struct Token
 {
@@ -30,8 +43,54 @@ private:
 
   istream* ip;
   bool owns;  // Token_stream이 istream을 소유하고 있는가?
-  Token ct{Kind::end};  // 현재의 토큰
+  Token ct{Kind::end};  // 현재의 토큰 (참고!) Token {Kind::end}는 Token {end, 0, 0}이다
 };
+
+// Token Token_stream::get()
+// {
+//   char ch = 0;
+//   *ip>>ch;
+
+//   switch (ch)
+//     {
+//       case 0:
+//         return ct = {Kind::end};  // 대입과 반환
+//       case ';':                   // 표현식의 끝 ;을 출력한다
+//       case '*':
+//       case '/':
+//       case '+':
+//       case '-':
+//       case '(':
+//       case ')':
+//       case '=':
+//         return ct = {static_cast<Kind>(ch)};  // char에서 Kind로 암시적 변환 불가
+//       case '0':
+//       case '1':
+//       case '2':
+//       case '3':
+//       case '4':
+//       case '5':
+//       case '6':
+//       case '7':
+//       case '8':
+//       case '9':
+//       case '.':
+//         ip->putback(ch);  // 첫 번째 수치 (또는 .)입력 스트림에 다시 집어넣는다
+//         *ip>>ct.number_value;  // ct로 숫자를 읽어 들인다
+//         ct.kind = Kind::number;
+//         return ct;
+//       default:  // name, name =가 아니면 오류
+//       if (isalpha(ch))
+//       {
+//         ip->putback(ch);  // 첫 번째 문자를 입력 스트림에 돌려놓는다
+//         *ip>>ct.string_value;  // 문자열을 ct로 읽어 들인다
+//         ct.kind = Kind::name;
+//         return ct;
+//       }
+//     }
+//   error("bad token");
+//   return ct = {Kind::print};
+// } 
 
 Token Token_stream::get()
 {
@@ -62,9 +121,10 @@ Token Token_stream::get()
           return ct;
         }
     }
-  error("bad token");
+  // error("bad token");
   return ct = {Kind::print};
 }
+
 
 double expr(bool get)  // 덧셈과  뺄셈
 {
@@ -140,4 +200,27 @@ double prim(bool get)  // 기본 단위를 처리한다
       default:
         return error("primary expected");
     }
+}
+
+Token_stream ts {cin};  // cin에서 받은 입력을 사용한다
+
+void calculate()
+{
+  for (;;)
+    {
+      ts.get();
+      if (ts.current().kind == Kind::end) break;
+      if (ts.current().kind == Kind::print) continue;
+        cout<<expr(false)<<endl;
+    }
+}
+
+int main(void)
+{
+  table["pi"] = 3.1415926535;  // 미리 정의된 이름들을 삽입한다
+  table["e"] = 2.7182818284;
+
+  calculate();
+
+  return no_of_errors;
 }
