@@ -4,6 +4,10 @@ void print_modulo(const vector<int>& v, ostream& os, int m)
 {
   for_each(begin(v), end(v),
     [&os, m](int x) {if (x % m == 0) os << x << " ";});
+
+  // 람다식에 이름을 붙여 사용할 수 있다
+  auto printr = [&os, m](int x) {if (x % m == 0) os << x << " ";}
+  for_each(begin(v), end(v), printrr);
 }
 
 // 이것을 펑터로 표현한다면
