@@ -1,0 +1,29 @@
+헤더 파일 포함 사항
+
+이름 있는 네임스페이스 namespace N { /*...*/ }
+inline 네임스페이스 inline namespace N { /*...*/ }
+타입 정의 struct Point { int x, y; };
+템플릿 선언 template <typename T> class Z;
+템플릿 정의 template <typename T> class V { /*...*/ }
+함수 선언 extern int strlen(const char*);
+inline 함수 정의 inline char get(char* p) { /*...*/ }
+constexpr 함수 정의 constexpr int fac(int n) { return (n<2) ? 1 : n*fac(n-1); }
+데이터 선언 extern int a;
+const 정의 const float pi = 3.141593;
+constexpr 정의 constexpr float pi2 = pi*pi;
+열거형 enum class Light { red, yellow, green };
+이름 선언 class Matrix;
+타입 별칭 using value_type = long;
+컴파일 타임 단정 static_assert(4<=sizeof(int), "small ints");
+인클루드 지시자 #include<algorithm>
+매크로 정의 #define VERSION 12.03;
+조건부 컴파일 지시자 #ifdef __cplusplus
+주석 /* check for end of file */
+
+헤더 파일 비포함 사항
+
+통상적인 함수 정의 char get(char* p) { return *p++; }
+데이터 정의 int a;
+집합체 정의 short tbl[] = {1, 2, 3};
+이름 없는 네임스페이스 namespace { /*...*/ }
+using 지시자 using namespace Foo;
